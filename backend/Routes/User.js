@@ -39,9 +39,7 @@ router.patch('/profile', async (req, res) => {
                 message: "User not found"  // Use 404 for "not found"
             });
         }
-
-        // Update the user's fields
-        user.username = username || user.username;  // Retain existing value if not provided
+        user.username = username || user.username;
         user.dob = dob || user.dob;
         user.address = address || user.address;
 
@@ -54,7 +52,7 @@ router.patch('/profile', async (req, res) => {
             user
         });
     } catch (error) {
-        // Handle any errors
+       
         console.error(error);
         return res.status(500).json({
             message: "Internal server error",

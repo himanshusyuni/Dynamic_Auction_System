@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -29,13 +31,64 @@ const Login = () => {
         navigate("/user");
       }
     } catch (err) {
-      setError(error.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Login with Google");
+  const getUserEmail = async (accessToken) => {
+    try {
+      // Make a GET request to the UserInfo API with the access token
+      const response = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Include the access token in the Authorization header
+          },
+        }
+      );
+
+      // Extract the email from the response
+      const email = response.data.email;
+
+      // Return the user's email
+      return email;
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      return null;
+    }
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      localStorage.setItem("accessToken", tokenResponse.access_token);
+
+      const email = await getUserEmail(tokenResponse.access_token);
+
+      if (email) {
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/api/auth/google",
+            { email } // Ensure 'email' is sent in the request body
+          );
+          if (response.status === 201) {
+            localStorage.setItem("authToken", response.data.token);
+            navigate("/user");
+          }
+        } catch (err) {
+          setError("Login Failed");
+          console.log(err);
+        }
+      } else {
+        setError("Failed to get email from Google.");
+      }
+    },
+    onError: (error) => {
+      console.error("Login Failed:", error);
+      setError("Google login failed");
+    },
+    scope:
+      "openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email", // Corrected scopes
+  });
 
   const handleRegisterRedirect = () => {
     navigate("/register");
@@ -92,7 +145,7 @@ const Login = () => {
         </div>
 
         <button
-          onClick={handleGoogleLogin}
+          onClick={googleLogin}
           className="w-full px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 mb-4"
         >
           Login with Google

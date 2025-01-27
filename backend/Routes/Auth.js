@@ -63,5 +63,20 @@ catch(err){
 
 });
 
-
+router.post("/google", async (req,res)=>{
+    const {email}=req.body;
+    const user = await User.findOne({email});
+    if(!user){
+        return res.status(404).json({
+            message:"User not found"
+        });
+    }
+    const token= jwt.sign({id:user._id, email:user.email},process.env.JWT_SECRET);
+    if(!token){
+        return res.status(405).json({
+            message:"server error"
+        });
+    }
+    res.status(201).json({token});
+})
 module.exports =router;
