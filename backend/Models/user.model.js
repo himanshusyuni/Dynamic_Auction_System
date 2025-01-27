@@ -21,7 +21,10 @@ const userSchema = mongoose.Schema({
         unique: true,
         match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"]
     },
-    
+    dob:{
+        type:Date
+    },
+    address:String,
     purchasedItems: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Item"
