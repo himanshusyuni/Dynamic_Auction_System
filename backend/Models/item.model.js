@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
 const itemSchema = mongoose.Schema({
-    itemName: {
+    itemName:String,
+
+    itemPic: {
         type: String,
-        required: [true, "Item name is necessary"]
+        
     },
-    itemPics: [{
-        type: String,
-        required: [true, "At least 1 photo is needed"]
-    }],
     auctionStatus: {
         type: String,
         enum: ['live', 'sold', 'unsold', 'payment'], 
@@ -18,10 +16,6 @@ const itemSchema = mongoose.Schema({
         type: String,
         enum: ['paid', 'pending'],
         default: 'pending'
-    },
-    auctionTimeRemaining: {
-        type: Number,
-        required: [true, "Auction duration is required"]
     },
     paymentTimeRemaining: {
         type: Number
@@ -38,6 +32,20 @@ const itemSchema = mongoose.Schema({
         type: Map,
         of: mongoose.Schema.Types.ObjectId,  // The value is the ObjectId of BidderNode
         default: {}
+    },
+    auctionTime:{
+        type:Number,
+        default:24,
+    },
+    description:String,
+    tags:[{type:String}],
+    currPrice:{
+        type:Number,
+        required:[true,"Price is needed"]
+    },
+    sellerEmail:{
+        type:String,
+        required:[true,"Seller mail is required"]
     }
 }, { timestamps: true });
 

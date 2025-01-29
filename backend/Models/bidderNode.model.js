@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Schema for a single node in the doubly linked list
 const bidderNodeSchema = mongoose.Schema({
     bidder: {
         type: mongoose.Schema.Types.ObjectId,
@@ -12,11 +11,11 @@ const bidderNodeSchema = mongoose.Schema({
         required: true
     },
     prev: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the previous node
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'BidderNode'
     },
     next: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the next node
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'BidderNode'
     }
 });
