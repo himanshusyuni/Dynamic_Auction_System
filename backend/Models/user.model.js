@@ -12,8 +12,7 @@ const userSchema = mongoose.Schema({
         minlength:6
     },
     userPic:{
-        type:String,
-        default:"user.img"
+        type:String
     },
     email: {
         type: String,

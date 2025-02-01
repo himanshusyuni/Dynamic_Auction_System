@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Redirect from "../Components/Redirect";
+
 const CreateAuctionPage = () => {
   const [itemName, setItemName] = useState("");
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
   const [startingPrice, setStartingPrice] = useState(100);
-  const [auctionTime, setAuctionTime] = useState(24); // Default to 24 hours
+  const [auctionTime, setAuctionTime] = useState(24);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
+
+  const cloudName = "dmgnrl8zf"; // Your Cloudinary cloud name
+  const uploadPreset = "Auction_System"; // Your Cloudinary unsigned upload preset
 
   const handleTagAdd = () => {
     if (newTag && !tags.includes(newTag)) {
@@ -21,6 +27,33 @@ const CreateAuctionPage = () => {
 
   const handleTagDelete = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    setUploading(true);
+
+    try {
+      const imageUploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+
+        const response = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          formData
+        );
+        return response.data.secure_url;
+      });
+
+      const uploadedImages = await Promise.all(imageUploadPromises); // Use Promise.all to resolve all promises
+      setImages((prevImages) => [...prevImages, ...uploadedImages]); // Flatten the image array
+    } catch (err) {
+      console.error("Error uploading images:", err);
+      alert("Failed to upload images. Please try again.");
+    }
+
+    setUploading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -42,8 +75,8 @@ const CreateAuctionPage = () => {
 
     try {
       const auctionData = {
-        itemName: itemName,
-        itemPic: image,
+        itemName,
+        itemPic: images,
         currPrice: Number(startingPrice),
         description,
         tags,
@@ -65,10 +98,11 @@ const CreateAuctionPage = () => {
     }
   };
 
+  if (!token) return <Redirect />;
+
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center items-center">
       <div className="max-w-2xl w-full p-8 bg-white rounded-lg shadow-lg">
-        {/* Go Back Button */}
         <button
           onClick={() => navigate("/")}
           className="bg-purple-500 text-white px-4 py-2 rounded-md mb-6 hover:bg-purple-600 transition"
@@ -99,17 +133,29 @@ const CreateAuctionPage = () => {
             />
           </div>
 
-          {/* Image */}
+          {/* Image Upload */}
           <div className="mb-4">
             <label htmlFor="image" className="block text-gray-700 font-medium">
-              Item Image
+              Item Images
             </label>
             <input
               type="file"
               id="image"
+              multiple
               className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={handleImageUpload}
             />
+            {uploading && <p>Uploading images...</p>}
+            <div className="mt-4 grid grid-cols-3 gap-4">
+              {images.map((imageUrl, index) => (
+                <img
+                  key={index}
+                  src={imageUrl}
+                  alt="Uploaded Item"
+                  className="w-full rounded-md"
+                />
+              ))}
+            </div>
           </div>
 
           {/* Starting Price */}

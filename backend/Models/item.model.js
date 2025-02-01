@@ -3,22 +3,18 @@ const mongoose = require('mongoose');
 const itemSchema = mongoose.Schema({
     itemName:String,
 
-    itemPic: {
+    itemPic:[ {
         type: String,
-        
-    },
+    }],
     auctionStatus: {
         type: String,
-        enum: ['live', 'sold', 'unsold', 'payment'], 
+        enum: ['live', 'sold', 'unsold'], 
         default: 'live'
     },
     paymentStatus: {
         type: String,
         enum: ['paid', 'pending'],
         default: 'pending'
-    },
-    paymentTimeRemaining: {
-        type: Number
     },
     biddersListHead: {
         type: mongoose.Schema.Types.ObjectId,
@@ -27,11 +23,6 @@ const itemSchema = mongoose.Schema({
     biddersListTail: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'BidderNode'
-    },
-    biddersMap: {
-        type: Map,
-        of: mongoose.Schema.Types.ObjectId,  // The value is the ObjectId of BidderNode
-        default: {}
     },
     auctionTime:{
         type:Number,

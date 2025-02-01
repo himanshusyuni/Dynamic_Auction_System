@@ -1,19 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
 const ItemCard = ({ item }) => {
   const { itemPic, sellerEmail, itemName, currPrice, tags } = item;
+  const img = itemPic[0];
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-sm w-full">
       {/* Item Image */}
-      <img
-        src={
-          itemPic ||
-          "https://cdn11.bigcommerce.com/s-x49po/images/stencil/1500x1500/products/129659/296646/handmade%2Fdownscaled%2Fh_xnb9kxph1u8_2000x2000__70552.1721033587.jpg?c=2"
-        }
-        alt={itemName}
-        className="w-full h-48 object-cover"
-      />
+      <img src={img} alt={itemName} className="w-full h-48 object-cover" />
 
       {/* Item Details */}
       <div className="p-4">

@@ -30,7 +30,7 @@ catch(err){
 });
 router.patch('/profile', async (req, res) => {
     try {
-        const { email, username, dob, address } = req.body;
+        const { email, username, dob, address,userPic } = req.body;
        
         // Find the user by email
         const user = await User.findOne({ email });
@@ -42,10 +42,11 @@ router.patch('/profile', async (req, res) => {
         user.username = username || user.username;
         user.dob = dob || user.dob;
         user.address = address || user.address;
+        user.userPic = userPic || userPic;
 
         // Save the updated user
         await user.save();
-
+        console.log(user);
         // Send a success response
         return res.status(200).json({
             message: "Profile updated successfully",
