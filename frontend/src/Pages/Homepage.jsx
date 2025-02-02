@@ -22,6 +22,7 @@ const HomePage = () => {
 
         if (response.status === 401) {
           console.log("PROBLEM IN FETCHING THE DATA");
+          console.log(response.data.err);
           return;
         }
         const auctions = response.data.AuctionList;
