@@ -18,7 +18,7 @@ const HomePage = () => {
     // Fetch the auction list from the backend
     const fetchAuctions = async () => {
       try {
-        const response = await axios.get("https://dynamic-auction-system.vercel.app/api/auction");
+        const response = await axios.get("https://dynamic-auction-system-jryod2koz-himanshusyunis-projects.vercel.app/api/auction");
 
         if (response.status === 401) {
           console.log("PROBLEM IN FETCHING THE DATA");
