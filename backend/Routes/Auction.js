@@ -63,7 +63,7 @@ router.post('/create', async (req, res) => {
   
         <br />
         <p style="font-style: italic;">Best regards,</p>
-        <p style="font-weight: bold;">Auction System</p>
+        <p style="font-weight: bold;">BidHub</p>
       </body>
     </html>
   `;
@@ -133,7 +133,7 @@ router.get('/', async (req, res) => {
       
             <br />
             <p style="font-style: italic;">Best regards,</p>
-            <p style="font-weight: bold;">Auction System</p>
+            <p style="font-weight: bold;"> BidHub </p>
           </body>
         </html>
       `;

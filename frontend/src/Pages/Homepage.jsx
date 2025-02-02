@@ -39,7 +39,6 @@ const HomePage = () => {
     };
 
     fetchAuctions();
-    
   }, []);
 
   useEffect(() => {
@@ -78,7 +77,7 @@ const HomePage = () => {
       <div className="bg-gray-100 min-h-screen">
         {/* Header */}
         <div className="flex items-center justify-between bg-white p-4 shadow-md">
-          <div className="text-xl font-bold text-blue-600">Auction System</div>
+          <div className="text-xl font-bold text-blue-600">BidHub</div>
           <div className="flex items-center space-x-4 w-full justify-center">
             {/* Search bar */}
             <div className="relative w-1/2">
