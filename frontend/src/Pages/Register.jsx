@@ -17,7 +17,7 @@ const Register = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "https://dynamic-auction-system-jryod2koz-himanshusyunis-projects.vercel.app/api/auth/register",
         {
           email,
           username,
