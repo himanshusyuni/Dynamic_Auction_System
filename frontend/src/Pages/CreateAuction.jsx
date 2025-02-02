@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Redirect from "../Components/Redirect";
 
+const BASE_URL = "http://localhost:3000/api"; // Define the base API URL
+
 const CreateAuctionPage = () => {
   const [itemName, setItemName] = useState("");
   const [images, setImages] = useState([]);
@@ -59,6 +61,7 @@ const CreateAuctionPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation for item name and price (already in place)
     if (!itemName.trim()) {
       alert("Item Name is required.");
       return;
@@ -70,6 +73,12 @@ const CreateAuctionPage = () => {
       Number(startingPrice) <= 0
     ) {
       alert("Starting Price must be a valid positive number.");
+      return;
+    }
+
+    // Validation for image upload
+    if (images.length === 0) {
+      alert("At least one image is required.");
       return;
     }
 
@@ -85,14 +94,13 @@ const CreateAuctionPage = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/api/auction/create",
+        `${BASE_URL}/auction/create`,
         auctionData
-      );
-      
+      ); // Use the base URL
 
       if (response.status === 201) {
         console.log("Your Auction is LIVE");
-        
+
         navigate("/");
       }
     } catch (err) {

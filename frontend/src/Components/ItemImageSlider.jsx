@@ -16,11 +16,13 @@ const ItemImageSlider = ({ itemPics }) => {
   }, [itemPics]);
 
   return (
-    <img
-      src={itemPics[currentImageIndex] || "default-image-url"}
-      alt="Auction Item"
-      className="w-full h-96 object-cover rounded-lg shadow-md"
-    />
+    <div className="relative w-full h-96">
+      <img
+        src={itemPics?.[currentImageIndex] || "default-image-url"}
+        alt="Auction Item"
+        className="absolute top-0 left-0 w-full h-full object-contain rounded-lg shadow-md"
+      />
+    </div>
   );
 };
 

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
+const BASE_URL = "http://localhost:3000/api"; // Define the base API URL
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,13 +18,10 @@ const Login = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
       setEmail("");
       setPassword("");
 
@@ -37,7 +36,6 @@ const Login = () => {
 
   const getUserEmail = async (accessToken) => {
     try {
-      // Make a GET request to the UserInfo API with the access token
       const response = await axios.get(
         "https://www.googleapis.com/oauth2/v3/userinfo",
         {
@@ -47,11 +45,7 @@ const Login = () => {
         }
       );
 
-      // Extract the email from the response
-      const email = response.data.email;
-
-      // Return the user's email
-      return email;
+      return response.data.email; // Return the email
     } catch (error) {
       console.error("Error fetching user info:", error);
       return null;
@@ -66,10 +60,9 @@ const Login = () => {
 
       if (email) {
         try {
-          const response = await axios.post(
-            "http://localhost:3000/api/auth/google",
-            { email } // Ensure 'email' is sent in the request body
-          );
+          const response = await axios.post(`${BASE_URL}/auth/google`, {
+            email,
+          }); // Use base URL for Google login API
           if (response.status === 201) {
             localStorage.setItem("authToken", response.data.token);
             navigate("/user");
@@ -87,7 +80,7 @@ const Login = () => {
       setError("Google login failed");
     },
     scope:
-      "openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email", // Corrected scopes
+      "openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
   });
 
   const handleRegisterRedirect = () => {

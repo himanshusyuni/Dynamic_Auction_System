@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Redirect from "../Components/Redirect";
 
+const BASE_URL = "http://localhost:3000/api"; // Add your base API URL
+
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,12 +23,9 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/user/profile",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/user/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setUserData(response.data.user);
       } catch (error) {
         setError(
@@ -56,7 +55,7 @@ const UserProfile = () => {
       }
 
       const updateResponse = await axios.patch(
-        "http://localhost:3000/api/user/profile",
+        `${BASE_URL}/user/profile`,
         {
           email: userData.email,
           username: userData.username,
