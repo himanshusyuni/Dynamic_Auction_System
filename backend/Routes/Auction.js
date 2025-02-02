@@ -147,7 +147,6 @@ router.get('/', async (req, res) => {
     console.log(err);
     res.status(401).json({
       message: 'Error in fetching the auction list',
-      err
     });
   }
 });

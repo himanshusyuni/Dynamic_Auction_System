@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Redirect from "../Components/Redirect";
 
-const BASE_URL = "http://localhost:3000/api"; // Define the base API URL
+const BASE_URL = "https://dynamic-auction-system.vercel.app"; // Define the base API URL
 
 const CreateAuctionPage = () => {
   const [itemName, setItemName] = useState("");

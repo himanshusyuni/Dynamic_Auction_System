@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-const BASE_URL = "https://dynamic-auction-system-jryod2koz-himanshusyunis-projects.vercel.app"; // Define the base API URL
+const BASE_URL = "https://dynamic-auction-system.vercel.app"; // Define the base API URL
 
 const Login = () => {
   const [email, setEmail] = useState("");
