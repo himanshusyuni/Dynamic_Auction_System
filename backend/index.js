@@ -15,10 +15,10 @@ app.use(cors());
 // MongoDB Connection
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => console.log('Error connecting to MongoDB:', err));
+.then(() => console.log('MongoDB connected successfully'))
+.catch((err) => console.log('Error connecting to MongoDB:', err));
 
 // Routes
 const AuthRoutes = require('./Routes/auth');
