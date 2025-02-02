@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaShoppingCart, FaBoxOpen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Redirect from "../Components/Redirect";
 
@@ -9,7 +8,6 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
 
@@ -41,27 +39,22 @@ const UserProfile = () => {
     fetchUserData();
   }, [token]);
 
-  const cloudName = "dmgnrl8zf"; // Your Cloudinary cloud name
-  const uploadPreset = "Auction_System";
-
   const handleChanges = async () => {
     try {
       let imageUrl = userData.userPic;
 
-      // Upload image if a new one is selected
       if (selectedImage) {
         const formData = new FormData();
         formData.append("file", selectedImage);
-        formData.append("upload_preset", "Auction_System"); // Replace with your Cloudinary upload preset
+        formData.append("upload_preset", "Auction_System");
 
         const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dmgnrl8zf/image/upload", // Replace with your Cloudinary cloud name
+          "https://api.cloudinary.com/v1_1/dmgnrl8zf/image/upload",
           formData
         );
         imageUrl = response.data.secure_url;
       }
 
-      // Update user profile
       const updateResponse = await axios.patch(
         "http://localhost:3000/api/user/profile",
         {
@@ -78,6 +71,7 @@ const UserProfile = () => {
       if (updateResponse.status === 200) {
         setIsEditing(false);
         setSelectedImage(null);
+        window.location.reload();
       } else {
         throw new Error("Failed to update profile. Please try again.");
       }
@@ -92,6 +86,11 @@ const UserProfile = () => {
     if (e.target.files[0]) {
       setSelectedImage(e.target.files[0]);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    navigate("/login");
   };
 
   const renderProfileSection = () => (
@@ -192,25 +191,6 @@ const UserProfile = () => {
     </div>
   );
 
-  const renderItemsSection = (title, items) => (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items?.map((item, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg shadow-lg">
-            <img
-              src={item.imageUrl || "https://via.placeholder.com/200"}
-              alt={item.name}
-              className="w-full h-32 object-cover mb-4 rounded-lg"
-            />
-            <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-            <p className="text-gray-600">{item.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="text-center text-xl text-gray-500 py-10">
@@ -233,46 +213,28 @@ const UserProfile = () => {
       <div className="w-1/4 bg-green-100 p-6 min-h-screen flex flex-col">
         <div className="space-y-8">
           <button
-            className={`text-lg w-full p-2 rounded-md hover:bg-green-600 ${
-              activeTab === "profile" ? "bg-green-600" : "bg-green-500"
-            }`}
-            onClick={() => setActiveTab("profile")}
+            className="text-lg w-full p-2 rounded-md bg-green-500 hover:bg-green-600"
+            onClick={() => setIsEditing(true)}
           >
             Profile
           </button>
-          <button
-            className={`text-lg w-full p-2 rounded-md hover:bg-green-600 ${
-              activeTab === "purchased" ? "bg-green-600" : "bg-green-500"
-            }`}
-            onClick={() => setActiveTab("purchased")}
-          >
-            Purchased Items
-          </button>
-          <button
-            className={`text-lg w-full p-2 rounded-md hover:bg-green-600 ${
-              activeTab === "sold" ? "bg-green-600" : "bg-green-500"
-            }`}
-            onClick={() => setActiveTab("sold")}
-          >
-            Sold Items
-          </button>
         </div>
-        <div className="mt-auto text-center">
+        <div className="mt-auto text-center space-y-4">
           <button
             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
             onClick={() => navigate("/")}
           >
             Back to Homepage
           </button>
+          <button
+            className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700"
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
         </div>
       </div>
-      <div className="w-3/4 p-8">
-        {activeTab === "profile" && renderProfileSection()}
-        {activeTab === "purchased" &&
-          renderItemsSection("Purchased Items", userData.purchasedItems)}
-        {activeTab === "sold" &&
-          renderItemsSection("Sold Items", userData.soldItems)}
-      </div>
+      <div className="w-3/4 p-8">{renderProfileSection()}</div>
     </div>
   );
 };

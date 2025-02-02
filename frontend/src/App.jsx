@@ -4,7 +4,8 @@ import Register from "./Pages/Register";
 import UserProfile from "./Pages/User";
 import HomePage from "./Pages/Homepage";
 import CreateAuctionPage from "./Pages/CreateAuction";
-import ItemDetailsPage from "./Pages/Auction";
+import ItemDetailsPage from "./Pages/ItemDetailsPage";
+import Pending from "./Components/Pending";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const App = () => {
     {
       path: "/auction/:id",
       element: <ItemDetailsPage />,
+    },
+    {
+      path: "/pending",
+      element: <Pending />,
     },
   ]);
   return <RouterProvider router={router} />;

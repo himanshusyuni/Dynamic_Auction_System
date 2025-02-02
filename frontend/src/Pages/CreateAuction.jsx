@@ -88,9 +88,11 @@ const CreateAuctionPage = () => {
         "http://localhost:3000/api/auction/create",
         auctionData
       );
+      
 
       if (response.status === 201) {
         console.log("Your Auction is LIVE");
+        
         navigate("/");
       }
     } catch (err) {

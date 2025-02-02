@@ -19,7 +19,7 @@ const ItemCard = ({ item }) => {
 
         {/* Tags */}
         <div className="mt-2 flex flex-wrap space-x-2">
-          {tags.map((tag, index) => (
+          {tags.slice(0, 2).map((tag, index) => (
             <span
               key={index}
               className="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-1 rounded-full"

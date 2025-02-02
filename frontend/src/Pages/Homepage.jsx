@@ -31,7 +31,7 @@ const HomePage = () => {
           auctions.filter((auction) => auction.auctionStatus === "live")
         );
         setCompletedAuctions(
-          auctions.filter((auction) => auction.auctionStatus === "completed")
+          auctions.filter((auction) => auction.auctionStatus !== "live")
         );
       } catch (error) {
         console.error("Error fetching auctions:", error);
@@ -39,6 +39,7 @@ const HomePage = () => {
     };
 
     fetchAuctions();
+    
   }, []);
 
   useEffect(() => {
