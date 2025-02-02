@@ -6,7 +6,7 @@ const cors = require('cors');
 
 
 app.get('/' ,(req,res)=>{
-  res.send("HELLOOO");
+  res.json({message : " Hello from backend"});
 });
 // Middleware
 app.use(express.json());
