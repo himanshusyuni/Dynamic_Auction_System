@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI)
 .catch((err) => console.log('Error connecting to MongoDB:', err));
 
 // Routes
-const AuthRoutes = require('./Routes/auth');
+const AuthRoutes = require('./Routes/Auth');
 app.use('/api/auth', AuthRoutes);
 
 const UserRoutes = require('./Routes/User');
