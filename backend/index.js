@@ -4,6 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
 
+
+app.get('/' ,(req,res)=>{
+  res.send("HELLOOO");
+});
 // Middleware
 app.use(express.json());
 app.use(cors());
