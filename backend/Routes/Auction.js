@@ -50,17 +50,24 @@ router.post('/create', async (req, res) => {
 
     const subject = 'Your Auction for ' + itemName + ' is Live!';
     const body = `
-      Hello,
-
-      Congratulations! Your auction for the item "${itemName}" is now live. Bidders can start placing their bids.
-
-      When the auction ends, you will receive an email with the final details of the highest bid and the winner.
-
-      Thank you for choosing our platform!
-
-      Best regards,
-      Auction System
-    `;
+    <html>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px;">
+        <p>Hi there,</p>
+  
+        <p style="font-size: 16px; font-weight: bold;">Congratulations!</p>
+        <p>Your auction for the item <strong>"${itemName}"</strong> is now live. Bidders can start placing their bids.</p>
+  
+        <p>When the auction ends, you will receive an email with the final details of the highest bid and the winner.</p>
+  
+        <p>Thank you for choosing our platform!</p>
+  
+        <br />
+        <p style="font-style: italic;">Best regards,</p>
+        <p style="font-weight: bold;">Auction System</p>
+      </body>
+    </html>
+  `;
+  
     sendMail(email, subject, body);
     console.log('Auction created successfully:', item);
     res.status(201).json({ message: 'Auction created successfully' });
@@ -114,17 +121,23 @@ router.get('/', async (req, res) => {
 
         const subject = 'The Auction Has Ended for ' + item.itemName;
         const body = `
-          Hello,
-
-          The auction for your item "${item.itemName}" has ended.
-
-          You can check the results, including the highest bid and the winner, by visiting our website.
-
-          Thank you for using our platform!
-
-          Best regards,
-          Auction System
-        `;
+        <html>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px;">
+            <p>Hello,</p>
+      
+            <p style="font-size: 16px; font-weight: bold;">The auction for your item <strong>"${item.itemName}"</strong> has ended.</p>
+      
+            <p>You can check the results, including the highest bid and the winner, by visiting our website.</p>
+      
+            <p>Thank you for using our platform!</p>
+      
+            <br />
+            <p style="font-style: italic;">Best regards,</p>
+            <p style="font-weight: bold;">Auction System</p>
+          </body>
+        </html>
+      `;
+      
         sendMail(user.email, subject, body);
       }
     }
