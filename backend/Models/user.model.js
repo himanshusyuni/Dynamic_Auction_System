@@ -14,6 +14,7 @@ const userSchema = mongoose.Schema(
     },
     profilePic: {  // Changed from userPic to profilePic for consistency
       type: String,
+      required:[true]
     },
     email: {
       type: String,
