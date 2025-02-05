@@ -53,14 +53,15 @@ const HomePage = () => {
         liveAuctions.filter((auction) =>
           auction.tags.some((tag) =>
             tag.toLowerCase().includes(lowercasedQuery)
-          )
+          ) || auction.itemName.toLowerCase().includes(lowercasedQuery)
+
         )
       );
       setFilteredCompletedAuctions(
         completedAuctions.filter((auction) =>
           auction.tags.some((tag) =>
             tag.toLowerCase().includes(lowercasedQuery)
-          )
+          )|| auction.itemName.toLowerCase().includes(lowercasedQuery)
         )
       );
     };
