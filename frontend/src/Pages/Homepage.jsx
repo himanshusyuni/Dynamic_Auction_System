@@ -14,12 +14,14 @@ const HomePage = () => {
   ); // Filtered completed auctions
   const navigate = useNavigate();
 
+  const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
+
   useEffect(() => {
     // Fetch the auction list from the backend
     const fetchAuctions = async () => {
       try {
         const response = await axios.get(
-          "https://dynamic-auction-system.vercel.app/api/auction"
+          `${BASE_URL}/auction`
         );
 
         if (response.status === 401) {

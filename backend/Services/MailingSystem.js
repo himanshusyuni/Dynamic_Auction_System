@@ -9,12 +9,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const sendMail = async (to, subject, text) => {
+const sendMail = async (to, subject, body) => { // Renamed "text" to "body"
   const mailOptions = {
     from: process.env.EMAIL_USER, // Sender address
     to, // Receiver address
     subject, // Subject of the email
-    text // Email body
+    html: body // Corrected to use "body"
   };
 
   try {

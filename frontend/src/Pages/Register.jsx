@@ -8,6 +8,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; 
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -17,7 +18,7 @@ const Register = () => {
     }
     try {
       const response = await axios.post(
-        "https://dynamic-auction-system.vercel.app/api/auth/register",
+        `${BASE_URL}/auth/register`,
         {
           email,
           username,

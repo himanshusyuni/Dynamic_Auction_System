@@ -89,6 +89,7 @@ const UserProfile = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
     navigate("/login");
   };
 

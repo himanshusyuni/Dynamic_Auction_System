@@ -9,7 +9,7 @@ import BidForm from "../Components/BidForm";
 import AuctionEndDetails from "../Components/AuctionEndDetails";
 import DescriptionSection from "../Components/DescriptionSection";
 import TagsSection from "../Components/TagsSection";
-
+const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
 const ItemDetailsPage = () => {
   const [item, setItem] = useState(null);
   const [auctionEndTime, setAuctionEndTime] = useState("");
@@ -24,7 +24,7 @@ const ItemDetailsPage = () => {
       if (token) {
         try {
           const response = await axios.get(
-            "https://dynamic-auction-system.vercel.app/api/user/profile",
+            `${BASE_URL}/user/profile`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -42,7 +42,7 @@ const ItemDetailsPage = () => {
     const fetchItemData = async () => {
       try {
         const response = await axios.get(
-          `https://dynamic-auction-system.vercel.app/api/auction/${id}`
+          `${BASE_URL}/auction/${id}`
         );
         const fetchedItem = response.data.item;
         const highestBidderEmail = response.data.user.email;
@@ -73,7 +73,7 @@ const ItemDetailsPage = () => {
 
     try {
       const response = await axios.patch(
-        `https://dynamic-auction-system.vercel.app/api/auction/${id}`,
+        `${BASE_URL}/auction/${id}`,
         { currPrice: parsedBidAmount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
