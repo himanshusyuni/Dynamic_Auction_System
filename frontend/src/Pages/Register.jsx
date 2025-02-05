@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ const Register = () => {
       });
       if (response.status === 201) {
         localStorage.setItem("token", response.token);
+        toast.success("Registration Successful!!");
         navigate("/login");
       }
     } catch (err) {
@@ -32,7 +34,6 @@ const Register = () => {
   };
 
   const handleLoginRedirect = () => {
-    window.alert("Registration Successful!!");
     navigate("/login");
   };
 
