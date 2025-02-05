@@ -89,7 +89,6 @@ const ItemDetailsPage = () => {
   };
 
   const handlePayment = () => {
-    // Navigate to payment page
     navigate("/pending");
   };
 

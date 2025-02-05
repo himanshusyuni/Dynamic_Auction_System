@@ -11,7 +11,7 @@ app.use(express.json());
 const frontendURL = 'https://dynamic-auction-system-53nw.vercel.app'; // Replace with your actual frontend URL
 app.use(cors({
   origin: frontendURL, // Only allow this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
+  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'], // Allow these HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
 }));
 
