@@ -75,7 +75,7 @@ const ItemDetailsPage = () => {
 
       if (response.status === 201) {
         console.log("Bid placed successfully");
-        navigate(`/auction/${id}`);
+        window.location.reload();
         return;
       }
     } catch (err) {
