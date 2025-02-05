@@ -23,12 +23,9 @@ const ItemDetailsPage = () => {
     const fetchUserData = async () => {
       if (token) {
         try {
-          const response = await axios.get(
-            `${BASE_URL}/user/profile`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await axios.get(`${BASE_URL}/user/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setUserEmail(response.data.user.email);
         } catch (error) {
           console.error("Error fetching user data", error);
@@ -41,9 +38,7 @@ const ItemDetailsPage = () => {
     // Fetch item data
     const fetchItemData = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/auction/${id}`
-        );
+        const response = await axios.get(`${BASE_URL}/auction/${id}`);
         const fetchedItem = response.data.item;
         const highestBidderEmail = response.data.user.email;
         setItem({ ...fetchedItem, highestBidderEmail });
@@ -80,7 +75,7 @@ const ItemDetailsPage = () => {
 
       if (response.status === 201) {
         console.log("Bid placed successfully");
-        window.location.reload();
+        navigate(`/auction/${id}`);
         return;
       }
     } catch (err) {
