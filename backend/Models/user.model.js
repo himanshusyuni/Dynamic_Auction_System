@@ -14,7 +14,8 @@ const userSchema = mongoose.Schema(
     },
     profilePic: {  // Changed from userPic to profilePic for consistency
       type: String,
-      required:[true]
+      required:[true],
+      default : "https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"
     },
     email: {
       type: String,

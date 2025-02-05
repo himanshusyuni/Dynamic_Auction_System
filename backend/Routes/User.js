@@ -27,7 +27,7 @@ router.get('/profile', Authenticate, async (req, res) => {
 // Update user profile information
 router.patch('/profile',Authenticate, async (req, res) => {
   try {
-    const { email, username, dob, address, userPic } = req.body;
+    const { email, username, dob, address, profilePic } = req.body;
 
     // Find the user by email
     const user = await User.findOne({ email });
@@ -41,7 +41,7 @@ router.patch('/profile',Authenticate, async (req, res) => {
     user.username = username || user.username;
     user.dob = dob || user.dob;
     user.address = address || user.address;
-    user.profilePic = userPic || user.profilePic;
+    user.profilePic = profilePic || user.profilePic;
 
     // Save the updated user
     await user.save();
