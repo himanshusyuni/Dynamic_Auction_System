@@ -8,7 +8,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; 
+  const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -17,14 +17,11 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/register`,
-        {
-          email,
-          username,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/register`, {
+        email,
+        username,
+        password,
+      });
       if (response.status === 201) {
         localStorage.setItem("token", response.token);
         navigate("/login");
@@ -35,6 +32,7 @@ const Register = () => {
   };
 
   const handleLoginRedirect = () => {
+    window.alert("Registration Successful!!");
     navigate("/login");
   };
 
