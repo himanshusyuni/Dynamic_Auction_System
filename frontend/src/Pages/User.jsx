@@ -40,7 +40,7 @@ const UserProfile = () => {
 
   const handleChanges = async () => {
     try {
-      let imageUrl = userData.userPic;
+      let imageUrl = userData.profilePic;
 
       if (selectedImage) {
         const formData = new FormData();
@@ -61,7 +61,7 @@ const UserProfile = () => {
           username: userData.username,
           dob: userData.dob,
           address: userData.address,
-          userPic: imageUrl,
+          profilePic: imageUrl,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -100,7 +100,7 @@ const UserProfile = () => {
           src={
             selectedImage
               ? URL.createObjectURL(selectedImage)
-              : userData.userPic || "https://via.placeholder.com/150"
+              : userData.profilePic || "https://via.placeholder.com/150"
           }
           alt="User Profile"
           className="w-32 h-32 rounded-full object-cover shadow-lg"
