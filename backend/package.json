@@ -6,7 +6,8 @@
 
   "scripts": {
    
-  "build": "react-scripts build"
+  "build": "react-scripts build",
+  "start" : "node index.js"
   },
   "author": "",
   "license": "ISC",
