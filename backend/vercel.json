@@ -1,15 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "index.js"
-    }
+    { "src": "/login", "dest": "/index.html" },
+    { "src": "/register", "dest": "/index.html" },
+    { "src": "/user", "dest": "/index.html" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/auction/create", "dest": "/index.html" },
+    { "src": "/auction/:id", "dest": "/index.html" },
+    { "src": "/pending", "dest": "/index.html" }
+  ],
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

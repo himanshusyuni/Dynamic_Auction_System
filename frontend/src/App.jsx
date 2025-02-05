@@ -10,32 +10,32 @@ import Pending from "./Components/Pending";
 const App = () => {
   const router = createBrowserRouter([
     {
-      src: "/login",
-      dest: <Login />,
+      path: "/login",
+      element: <Login />,
     },
     {
-      src: "/register",
-      dest: <Register />,
+      path: "/register",
+      element: <Register />,
     },
     {
-      src: "/user",
-      dest: <UserProfile />,
+      path: "/user",
+      element: <UserProfile />,
     },
     {
-      src: "/",
-      dest: <HomePage />,
+      path: "/",
+      element: <HomePage />,
     },
     {
-      src: "/auction/create",
-      dest: <CreateAuctionPage />,
+      path: "/auction/create",
+      element: <CreateAuctionPage />,
     },
     {
-      src: "/auction/:id",
-      dest: <ItemDetailsPage />,
+      path: "/auction/:id",
+      element: <ItemDetailsPage />,
     },
     {
-      src: "/pending",
-      dest: <Pending />,
+      path: "/pending",
+      element: <Pending />,
     },
   ]);
   return <RouterProvider router={router} />;
