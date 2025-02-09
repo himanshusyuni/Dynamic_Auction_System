@@ -1,9 +1,82 @@
+Create Auction Page
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Redirect from "../Components/Redirect";
 
-const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Define the base API URL
+const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
 
 const CreateAuctionPage = () => {
   const [itemName, setItemName] = useState("");
@@ -14,11 +87,12 @@ const CreateAuctionPage = () => {
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
 
-  const cloudName = "dmgnrl8zf"; // Your Cloudinary cloud name
-  const uploadPreset = "Auction_System"; // Your Cloudinary unsigned upload preset
+  const cloudName = "dmgnrl8zf";
+  const uploadPreset = "Auction_System";
 
   const handleTagAdd = () => {
     if (newTag && !tags.includes(newTag)) {
@@ -48,210 +122,27 @@ const CreateAuctionPage = () => {
         return response.data.secure_url;
       });
 
-      const uploadedImages = await Promise.all(imageUploadPromises); // Use Promise.all to resolve all promises
-      setImages((prevImages) => [...prevImages, ...uploadedImages]); // Flatten the image array
+      const uploadedImages = await Promise.all(imageUploadPromises);
+      setImages((prevImages) => [...prevImages, ...uploadedImages]);
     } catch (err) {
       console.error("Error uploading images:", err);
-      alert("Failed to upload images. Please try again.");
+      setErrors((prevErrors) => ({ ...prevErrors, imageUpload: "Failed to upload images. Please try again." }));
     }
 
     setUploading(false);
   };
 
+  const handleImageRemove = (imageUrl) => {
+    setImages(images.filter((url) => url !== imageUrl));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation for item name and price (already in place)
+    let validationErrors = {};
+
     if (!itemName.trim()) {
-      alert("Item Name is required.");
-      return;
-    }
-
-    if (
-      !startingPrice ||
-      isNaN(Number(startingPrice)) ||
-      Number(startingPrice) <= 0
-    ) {
-      alert("Starting Price must be a valid positive number.");
-      return;
-    }
-
-    // Validation for image upload
-    if (images.length === 0) {
-      alert("At least one image is required.");
-      return;
-    }
-
-    try {
-      const auctionData = {
-        itemName,
-        itemPic: images,
-        currPrice: Number(startingPrice),
-        description,
-        tags,
-        auctionTime: Number(auctionTime),
-        token,
-      };
-
-      const response = await axios.post(
-        `${BASE_URL}/auction/create`,
-        auctionData
-      ); // Use the base URL
-
-      if (response.status === 201) {
-        console.log("Your Auction is LIVE");
-
-        navigate("/");
-      }
-    } catch (err) {
-      console.log("Problem in creating auction", err);
-    }
-  };
-
-  if (!token) return <Redirect />;
-
-  return (
-    <div className="bg-gray-100 min-h-screen flex justify-center items-center">
-      <div className="max-w-2xl w-full p-8 bg-white rounded-lg shadow-lg">
-        <button
-          onClick={() => navigate("/")}
-          className="bg-purple-500 text-white px-4 py-2 rounded-md mb-6 hover:bg-purple-600 transition"
-        >
-          Go Back
-        </button>
-
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-          Create Auction
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Item Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="itemName"
-              className="block text-gray-700 font-medium"
-            >
-              Item Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="itemName"
-              className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Image Upload */}
-          <div className="mb-4">
-            <label htmlFor="image" className="block text-gray-700 font-medium">
-              Item Images
-            </label>
-            <input
-              type="file"
-              id="image"
-              multiple
-              className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleImageUpload}
-            />
-            {uploading && <p>Uploading images...</p>}
-            <div className="mt-4 grid grid-cols-3 gap-4">
-              {images.map((imageUrl, index) => (
-                <img
-                  key={index}
-                  src={imageUrl}
-                  alt="Uploaded Item"
-                  className="w-full rounded-md"
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Starting Price */}
-          <div className="mb-4">
-            <label
-              htmlFor="startingPrice"
-              className="block text-gray-700 font-medium"
-            >
-              Starting Price <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              id="startingPrice"
-              className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={startingPrice}
-              onChange={(e) => setStartingPrice(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Auction Time */}
-          <div className="mb-4">
-            <label
-              htmlFor="auctionTime"
-              className="block text-gray-700 font-medium"
-            >
-              Auction Time (hours)
-            </label>
-            <input
-              type="number"
-              id="auctionTime"
-              className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={auctionTime}
-              onChange={(e) => setAuctionTime(e.target.value)}
-              min="1"
-            />
-          </div>
-
-          {/* Description */}
-          <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-gray-700 font-medium"
-            >
-              Description
-            </label>
-            <textarea
-              id="description"
-              className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="4"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          {/* Tags */}
-          <div className="mb-4">
-            <label htmlFor="tags" className="block text-gray-700 font-medium">
-              Tags
-            </label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                id="tags"
-                className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-              />
-              <button
-                type="button"
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-                onClick={handleTagAdd}
-              >
-                Add Tag
-              </button>
-            </div>
-            <div className="mt-2">
-              <ul className="flex flex-wrap space-x-2">
-                {tags.map((tag, index) => (
-                  <li
-                    key={index}
-                    className="bg-gray-300 text-gray-700 px-3 py-1 rounded-full flex items-center space-x-2"
-                  >
-                    <span>{tag}</span>
-                    <button
-                      type="button"
+      validationErrors.itemName = "Item Name is required.";
                       className="text-red-500"
                       onClick={() => handleTagDelete(tag)}
                     >
