@@ -7,7 +7,6 @@ const User = require('../Models/user.model');
 const Authenticate = require('../Middlewares/authenticate');
 const sendMail = require('../Services/MailingSystem');
 
-// Creating new auction
 router.post('/create', async (req, res) => {
   const { itemName, itemPic, auctionTime, tags, description, currPrice, token } = req.body;
 
@@ -32,8 +31,6 @@ router.post('/create', async (req, res) => {
       prev: null,
       next: null,
     });
-
-    // Create the item and assign the bidder node
     const item = await new Item({
       itemName,
       itemPic,
@@ -76,8 +73,6 @@ router.post('/create', async (req, res) => {
     res.status(500).json({ message: 'Failed to create auction' });
   }
 });
-
-// Fetching info of existing auction
 router.get('/:auctionid', async (req, res) => {
   const auctionId = req.params.auctionid;
   try {
@@ -97,11 +92,10 @@ router.get('/', async (req, res) => {
   console.log('Fetching Auction Data');
 
   try {
-    const AuctionList = await Item.find(); // Fetch all auction items
+    const AuctionList = await Item.find();
 
     for (let item of AuctionList) {
-      const auctionEndTime = new Date(item.createdAt).getTime() + item.auctionTime * 60 * 60 * 1000; // Convert auctionTime (hours) to milliseconds
-
+      const auctionEndTime = new Date(item.createdAt).getTime() + item.auctionTime * 60 * 60 * 1000;
       if (item.auctionStatus === 'live' && auctionEndTime <= Date.now()) {
         const node = await BidderNode.findOne({ _id: item.biddersListTail });
         const user = await User.findOne({ _id: node.bidder });
@@ -141,7 +135,6 @@ router.get('/', async (req, res) => {
         sendMail(user.email, subject, body);
       }
     }
-
     res.status(201).json({ AuctionList });
   } catch (err) {
     console.log(err);
@@ -151,7 +144,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Updating auction
 router.patch('/:auctionid', Authenticate, async (req, res) => {
   const auctionId = req.params.auctionid;
 
@@ -168,24 +160,27 @@ router.patch('/:auctionid', Authenticate, async (req, res) => {
     item.currPrice = currPrice;
 
     const prevNode = await BidderNode.findOne({ _id: item.biddersListTail });
-    const Node = await new BidderNode({
+    const Node = new BidderNode({
       bidder: user.id,
       bidAmount: currPrice,
       prev: prevNode._id,
       next: null,
     });
 
-    console.log('Nodes created', user);
     await Node.save();
-    console.log(Node);
 
     prevNode.next = Node._id;
     await prevNode.save();
-    console.log(prevNode);
 
     item.biddersListTail = Node._id;
     await item.save();
-    console.log('DONE', item);
+    const io = req.app.get("io");
+    io.to(auctionId).emit("bidUpdated", {
+      highestBid: item.currPrice,
+      bidderEmail: user.email,
+      auctionId:auctionId
+    });
+
     res.status(201).json({ message: 'Bid placed' });
   } catch (err) {
     console.log(err);

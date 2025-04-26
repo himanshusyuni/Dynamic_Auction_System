@@ -1,22 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+
+const socket = io(  import.meta.env.VITE_SocketURL);
 
 const ItemCard = ({ item }) => {
-  const { itemPic, sellerEmail, itemName, currPrice, tags } = item;
+  const { itemPic, itemName, tags, _id, currPrice, sellerEmail } = item;
   const img = itemPic[0];
+  const [currentPrice, setCurrentPrice] = useState(currPrice);
+  const [currentEmail, setCurrentEmail] = useState(sellerEmail);
+
+  useEffect(() => {
+    socket.emit("joinAuction", _id);
+    socket.on("bidUpdated", (data) => {
+      console.log("Hii");
+      if (_id == data.auctionId) {
+        setCurrentPrice(data.highestBid);
+        setCurrentEmail(data.bidderEmail);
+      }
+    });
+    return () => {
+      socket.off("bidUpdate");
+    };
+  }, [_id]);
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden w-full h-full flex flex-col">
-      {/* Item Image */}
       <img src={img} alt={itemName} className="w-full h-48 object-cover" />
-
-      {/* Item Details */}
       <div className="p-4 flex-grow flex flex-col justify-between">
         <div>
+          {/* Item Name */}
           <h3 className="text-xl font-semibold text-gray-800">{itemName}</h3>
-          <p className="text-sm text-gray-600">Seller: {sellerEmail}</p>
+
+          {/* Seller Email */}
+          <p className="text-sm text-gray-600">Seller: {currentEmail}</p>
 
           {/* Current Price */}
-          <p className="text-lg font-bold text-blue-500 mt-2">₹{currPrice}</p>
+          <p className="text-lg font-bold text-blue-500 mt-2">
+            ₹{currentPrice}
+          </p>
 
           {/* Tags */}
           <div className="mt-2 flex flex-wrap gap-2">

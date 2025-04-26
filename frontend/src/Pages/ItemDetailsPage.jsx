@@ -9,7 +9,10 @@ import BidForm from "../Components/BidForm";
 import AuctionEndDetails from "../Components/AuctionEndDetails";
 import DescriptionSection from "../Components/DescriptionSection";
 import TagsSection from "../Components/TagsSection";
-const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
+import { io } from "socket.io-client";
+
+const BASE_URL =  import.meta.env.VITE_BackendURL;
+
 const ItemDetailsPage = () => {
   const [item, setItem] = useState(null);
   const [auctionEndTime, setAuctionEndTime] = useState("");
@@ -17,6 +20,9 @@ const ItemDetailsPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const [userEmail, setUserEmail] = useState("");
+
+  const [currentPrice, setCurrentPrice] = useState(null);
+  const [highestBidderEmail, setHighestBidderEmail] = useState("");
 
   useEffect(() => {
     // Fetch user data
@@ -26,6 +32,7 @@ const ItemDetailsPage = () => {
           const response = await axios.get(`${BASE_URL}/user/profile`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          console.log("User data fetched:", response.data);
           setUserEmail(response.data.user.email);
         } catch (error) {
           console.error("Error fetching user data", error);
@@ -49,19 +56,59 @@ const ItemDetailsPage = () => {
           createdAt.getTime() + auctionDurationInHours * 60 * 60 * 1000
         );
         setAuctionEndTime(auctionEndDate.toLocaleString());
+
+        setCurrentPrice(fetchedItem.currPrice);
+        setHighestBidderEmail(highestBidderEmail);
       } catch (error) {
         console.error("Error fetching item data:", error);
       }
     };
 
     fetchItemData();
+
+    // WebSocket: join auction room
+    const socketUrl=  import.meta.env.VITE_SocketURL;
+    const socket = io(socketUrl, {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+    });
+
+    socket.on("connect", () => {
+      console.log("WebSocket connected:", socket.id);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("WebSocket disconnected. Reason:", reason);
+    });
+
+    socket.on("reconnect_attempt", (attemptNumber) => {
+      console.log(`Reconnection attempt: ${attemptNumber}`);
+    });
+
+    socket.emit("joinAuction", id, () => {
+      console.log(`Joined auction room for auction ID: ${id}`);
+    });
+
+    // Listen for bid updates
+    socket.on("bidUpdated", (data) => {
+      console.log("Received real-time bid:", data);
+      setCurrentPrice(data.highestBid);
+      setHighestBidderEmail(data.bidderEmail);
+    });
+
+    return () => {
+      socket.disconnect();
+      console.log("WebSocket disconnected");
+    };
   }, [id, token]);
 
   const handleBidSubmit = async (e, bidAmount) => {
     e.preventDefault();
     const parsedBidAmount = Number(bidAmount);
 
-    if (parsedBidAmount <= item.currPrice) {
+    if (parsedBidAmount <= currentPrice) {
       console.log("Bid should be higher than current price");
       return;
     }
@@ -75,8 +122,6 @@ const ItemDetailsPage = () => {
 
       if (response.status === 201) {
         console.log("Bid placed successfully");
-        window.location.reload();
-        return;
       }
     } catch (err) {
       console.error("Problem in placing bid", err);
@@ -114,7 +159,6 @@ const ItemDetailsPage = () => {
               <ItemImageSlider itemPics={item.itemPic} />
             </div>
             <div className="flex-1 md:ml-8">
-              {/* Corrected position of item name and auction time */}
               <div className="flex justify-between items-center">
                 <h2 className="text-3xl font-semibold text-gray-800">
                   {item.itemName}
@@ -125,9 +169,13 @@ const ItemDetailsPage = () => {
                 </div>
               </div>
 
-              <AuctionDetails item={item} auctionEndTime={auctionEndTime} />
+              <AuctionDetails
+                price={currentPrice}
+                highestBidderEmail={highestBidderEmail}
+                sellerEmail={item.sellerEmail}
+                auctionEndTime={auctionEndTime}
+              />
 
-              {/* Conditional rendering based on auction status */}
               {item.auctionStatus !== "live" ? (
                 <AuctionEndDetails
                   item={item}
@@ -136,7 +184,8 @@ const ItemDetailsPage = () => {
                 />
               ) : (
                 <BidForm
-                  currPrice={item.currPrice}
+                  currPrice={currentPrice}
+                  highestBidderEmail={highestBidderEmail}
                   handleBidSubmit={handleBidSubmit}
                 />
               )}

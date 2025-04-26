@@ -3,41 +3,59 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
+const mongoose = require('mongoose');
+const http = require('http');
+const { Server } = require('socket.io');
 
-// Middleware
+const server = http.createServer(app);
+
+const frontendURL = process.env.FrontendURL;
+const io = new Server(server, {
+  cors: {
+    origin: frontendURL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  }
+});
+
+app.set("io", io);
 app.use(express.json());
 
-// CORS configuration (allow frontend origin)
-const frontendURL = 'https://dynamic-auction-system-53nw.vercel.app'; // Replace with your actual frontend URL
 app.use(cors({
-  origin: frontendURL, // Only allow this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'], // Allow these HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+  origin: frontendURL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// MongoDB Connection
-const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => console.log('Error connecting to MongoDB:', err));
+  .then(() => console.log(' MongoDB connected successfully'))
+  .catch((err) => console.log(' MongoDB connection error:', err));
 
 // Routes
-const AuthRoutes = require('./Routes/Auth');  // Ensure file exists as Auth.js in Routes
+const AuthRoutes = require('./Routes/Auth');
+const UserRoutes = require('./Routes/User');
+const AuctionRoutes = require('./Routes/Auction'); 
+
 app.use('/api/auth', AuthRoutes);
-
-const UserRoutes = require('./Routes/User');  // Ensure file exists as User.js in Routes
 app.use('/api/user', UserRoutes);
-
-const AuctionRoutes = require('./Routes/Auction');  // Ensure file exists as Auction.js in Routes
 app.use('/api/auction', AuctionRoutes);
 
-// Home route (for testing)
 app.get('/', (req, res) => {
   res.json({ message: "Hello from backend" });
 });
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
 
-// Set the server port
+  socket.on('joinAuction', (auctionId) => {
+    socket.join(auctionId);
+    console.log(`User ${socket.id} joined auction ${auctionId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -3,7 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Redirect from "../Components/Redirect";
 
-const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Add your base API URL
+// const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Add your base API 
+// URL
+
+const BASE_URL =  import.meta.env.VITE_BackendURL;
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);

@@ -9,7 +9,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
+  const BASE_URL =   import.meta.env.VITE_BackendURL;
   const handleRegister = async (e) => {
     e.preventDefault();
 

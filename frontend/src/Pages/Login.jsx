@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Define the base API URL
+const BASE_URL = import.meta.env.VITE_BackendURL;
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +24,6 @@ const Login = () => {
       });
       setEmail("");
       setPassword("");
-
       if (response.status === 201) {
         localStorage.setItem("authToken", response.data.token);
         navigate("/user");

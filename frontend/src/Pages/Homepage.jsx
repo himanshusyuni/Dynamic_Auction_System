@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ItemCard from "../Components/ItemCard";
 import axios from "axios";
@@ -7,38 +7,35 @@ import Footer from "../Components/Footer";
 const HomePage = () => {
   const [liveAuctions, setLiveAuctions] = useState([]);
   const [completedAuctions, setCompletedAuctions] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search input
-  const [filteredLiveAuctions, setFilteredLiveAuctions] = useState([]); // Filtered live auctions
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredLiveAuctions, setFilteredLiveAuctions] = useState([]);
   const [filteredCompletedAuctions, setFilteredCompletedAuctions] = useState(
     []
-  ); // Filtered completed auctions
-  const navigate = useNavigate();
+  );
 
-  const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
+  const navigate = useNavigate();
+  const BASE_URL =  import.meta.env.VITE_BackendURL;
+
+  const liveAuctionsRef = useRef([]);
+  const searchQueryRef = useRef("");
 
   useEffect(() => {
-    // Fetch the auction list from the backend
     const fetchAuctions = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}/auction`
-        );
-
-        if (response.status === 401) {
-          console.log("PROBLEM IN FETCHING THE DATA");
-          return;
-        }
+        const response = await axios.get(`${BASE_URL}/auction`);
         const auctions = response.data.AuctionList;
-        console.log(auctions);
-        // Categorize auctions based on their status
-        setLiveAuctions(
-          auctions.filter((auction) => auction.auctionStatus === "live")
-        );
-        setCompletedAuctions(
-          auctions.filter((auction) => auction.auctionStatus !== "live")
-        );
-      } catch (error) {
-        console.error("Error fetching auctions:", error);
+
+        const live = auctions.filter((a) => a.auctionStatus === "live");
+        const completed = auctions.filter((a) => a.auctionStatus !== "live");
+
+        setLiveAuctions(live);
+        setCompletedAuctions(completed);
+        setFilteredLiveAuctions(live);
+        setFilteredCompletedAuctions(completed);
+
+        liveAuctionsRef.current = live;
+      } catch (err) {
+        console.error("Error fetching auctions", err);
       }
     };
 
@@ -46,35 +43,28 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    // Filter auctions based on search query
-    const filterAuctions = () => {
-      const lowercasedQuery = searchQuery.toLowerCase();
-      setFilteredLiveAuctions(
-        liveAuctions.filter((auction) =>
-          auction.tags.some((tag) =>
-            tag.toLowerCase().includes(lowercasedQuery)
-          ) || auction.itemName.toLowerCase().includes(lowercasedQuery)
+    searchQueryRef.current = searchQuery;
 
-        )
-      );
-      setFilteredCompletedAuctions(
-        completedAuctions.filter((auction) =>
-          auction.tags.some((tag) =>
-            tag.toLowerCase().includes(lowercasedQuery)
-          )|| auction.itemName.toLowerCase().includes(lowercasedQuery)
-        )
-      );
-    };
+    const query = searchQuery.toLowerCase();
 
-    filterAuctions();
-    if (searchQuery === "") {
-      setFilteredCompletedAuctions(completedAuctions);
-      setFilteredLiveAuctions(liveAuctions);
-    }
-  }, [searchQuery, liveAuctions, completedAuctions]); // Re-run filtering when search query or auctions change
+    const liveFiltered = liveAuctions.filter(
+      (auction) =>
+        auction.itemName.toLowerCase().includes(query) ||
+        auction.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+
+    const completedFiltered = completedAuctions.filter(
+      (auction) =>
+        auction.itemName.toLowerCase().includes(query) ||
+        auction.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+
+    setFilteredLiveAuctions(liveFiltered);
+    setFilteredCompletedAuctions(completedFiltered);
+  }, [searchQuery, liveAuctions, completedAuctions]);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query as user types
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -91,17 +81,13 @@ const HomePage = () => {
                 placeholder="Search items..."
                 className="px-4 py-2 border border-gray-300 rounded-lg w-full pl-10"
                 value={searchQuery}
-                onChange={handleSearchChange} // Update search query on input change
+                onChange={handleSearchChange}
               />
-              <button
-                className="absolute right-0 top-0 bottom-0 px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
-                // Search button click handler
-              >
+              <button className="absolute right-0 top-0 bottom-0 px-4 py-2 bg-blue-600 text-white rounded-r-lg">
                 Search
               </button>
             </div>
 
-            {/* Create Auction Button */}
             <button
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
               onClick={() => navigate("/auction/create")}
@@ -123,17 +109,18 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Live Auctions Section */}
+        {/* Live Auctions */}
         <div className="p-8">
           <h2 className="text-2xl font-bold mb-4">Live Auctions</h2>
-          <div className="flex overflow-x-auto overflow-y-hidden space-x-4 scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-500">
+          <div className="flex overflow-x-auto space-x-4">
             {filteredLiveAuctions.length > 0 ? (
               filteredLiveAuctions.map((item) => (
                 <div
-                  className="flex-none w-60 cursor-pointer transform transition-transform duration-300 hover:scale-105 border border-gray-300 rounded-lg"
-                  onClick={() => navigate(`/auction/${item._id}`)} // Navigate to auction detail page
+                  key={item._id}
+                  className="flex-none w-60 border rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => navigate(`/auction/${item._id}`)}
                 >
-                  <ItemCard key={item._id} item={item} />
+                  <ItemCard item={item} />
                 </div>
               ))
             ) : (
@@ -142,17 +129,18 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Completed Auctions Section */}
+        {/* Completed Auctions */}
         <div className="p-8 bg-gray-50">
           <h2 className="text-2xl font-bold mb-4">Completed Auctions</h2>
-          <div className="flex overflow-x-auto overflow-y-hidden space-x-4 scrollbar-thin scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-500">
+          <div className="flex overflow-x-auto space-x-4">
             {filteredCompletedAuctions.length > 0 ? (
               filteredCompletedAuctions.map((item) => (
                 <div
-                  className="flex-none w-60 cursor-pointer transform transition-transform duration-300 hover:scale-105 border border-gray-300 rounded-lg"
-                  onClick={() => navigate(`/auction/${item._id}`)} // Navigate to auction detail page
+                  key={item._id}
+                  className="flex-none w-60 border rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => navigate(`/auction/${item._id}`)}
                 >
-                  <ItemCard key={item._id} item={item} />
+                  <ItemCard item={item} />
                 </div>
               ))
             ) : (

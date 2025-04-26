@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Redirect from "../Components/Redirect";
 
-const BASE_URL = "https://dynamic-auction-system.vercel.app/api";
+const BASE_URL = import.meta.env.VITE_BackendURL;
 
 const CreateAuctionPage = () => {
   const [itemName, setItemName] = useState("");
@@ -18,8 +18,8 @@ const CreateAuctionPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
 
-  const cloudName = "dmgnrl8zf";
-  const uploadPreset = "Auction_System";
+  const cloudName = import.meta.env.VITE_CloudName;
+  const uploadPreset = import.meta.env.VITE_UploadPreset;
 
   const handleTagAdd = () => {
     if (newTag && !tags.includes(newTag)) {
@@ -53,7 +53,10 @@ const CreateAuctionPage = () => {
       setImages((prevImages) => [...prevImages, ...uploadedImages]);
     } catch (err) {
       console.error("Error uploading images:", err);
-      setErrors((prevErrors) => ({ ...prevErrors, imageUpload: "Failed to upload images. Please try again." }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        imageUpload: "Failed to upload images. Please try again.",
+      }));
     }
 
     setUploading(false);
@@ -72,8 +75,13 @@ const CreateAuctionPage = () => {
       validationErrors.itemName = "Item Name is required.";
     }
 
-    if (!startingPrice || isNaN(Number(startingPrice)) || Number(startingPrice) <= 0) {
-      validationErrors.startingPrice = "Starting Price must be a valid positive number.";
+    if (
+      !startingPrice ||
+      isNaN(Number(startingPrice)) ||
+      Number(startingPrice) <= 0
+    ) {
+      validationErrors.startingPrice =
+        "Starting Price must be a valid positive number.";
     }
 
     if (images.length === 0) {
@@ -95,7 +103,10 @@ const CreateAuctionPage = () => {
         token,
       };
 
-      const response = await axios.post(`${BASE_URL}/auction/create`, auctionData);
+      const response = await axios.post(
+        `${BASE_URL}/auction/create`,
+        auctionData
+      );
 
       if (response.status === 201) {
         console.log("Your Auction is LIVE");
@@ -125,7 +136,10 @@ const CreateAuctionPage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Item Name */}
           <div className="mb-4">
-            <label htmlFor="itemName" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="itemName"
+              className="block text-gray-700 font-medium"
+            >
               Item Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -135,7 +149,9 @@ const CreateAuctionPage = () => {
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
-            {errors.itemName && <p className="text-red-500 text-sm mt-1">{errors.itemName}</p>}
+            {errors.itemName && (
+              <p className="text-red-500 text-sm mt-1">{errors.itemName}</p>
+            )}
           </div>
 
           {/* Image Upload */}
@@ -151,7 +167,9 @@ const CreateAuctionPage = () => {
               onChange={handleImageUpload}
             />
             {uploading && <p>Uploading images...</p>}
-            {errors.images && <p className="text-red-500 text-sm mt-1">{errors.images}</p>}
+            {errors.images && (
+              <p className="text-red-500 text-sm mt-1">{errors.images}</p>
+            )}
             <div className="mt-4 grid grid-cols-3 gap-4">
               {images.map((imageUrl, index) => (
                 <div key={index} className="relative">
@@ -174,7 +192,10 @@ const CreateAuctionPage = () => {
 
           {/* Starting Price */}
           <div className="mb-4">
-            <label htmlFor="startingPrice" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="startingPrice"
+              className="block text-gray-700 font-medium"
+            >
               Starting Price <span className="text-red-500">*</span>
             </label>
             <input
@@ -184,12 +205,19 @@ const CreateAuctionPage = () => {
               value={startingPrice}
               onChange={(e) => setStartingPrice(e.target.value)}
             />
-            {errors.startingPrice && <p className="text-red-500 text-sm mt-1">{errors.startingPrice}</p>}
+            {errors.startingPrice && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.startingPrice}
+              </p>
+            )}
           </div>
 
           {/* Auction Time */}
           <div className="mb-4">
-            <label htmlFor="auctionTime" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="auctionTime"
+              className="block text-gray-700 font-medium"
+            >
               Auction Time (hours)
             </label>
             <input
@@ -204,7 +232,10 @@ const CreateAuctionPage = () => {
 
           {/* Description */}
           <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="description"
+              className="block text-gray-700 font-medium"
+            >
               Description
             </label>
             <textarea
