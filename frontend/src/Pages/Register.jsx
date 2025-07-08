@@ -9,7 +9,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const BASE_URL =   import.meta.env.VITE_BackendURL;
+  const BASE_URL = import.meta.env.VITE_BackendURL;
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -39,21 +39,27 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md border-2 border-blue-400">
+        <h1 className="text-5xl text-center font-bold text-blue-600 bg-green-100 px-3 py-1 rounded-lg shadow">
+          BidHub
+        </h1>
+        <h2 className="text-2xl font-bold text-center text-gray-700 mb-3 mt-4">
           Register
         </h2>
-
         {error && <div className="text-red-600 text-center mb-4">{error}</div>}
 
         <form onSubmit={handleRegister}>
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700">
+            <label
+              htmlFor="username"
+              className="block font-semibold text-gray-700"
+            >
               Username
             </label>
             <input
               type="text"
               id="username"
+              placeholder="username"
               className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -62,12 +68,16 @@ const Register = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">
+            <label
+              htmlFor="email"
+              className="block font-semibold text-gray-700"
+            >
               Email
             </label>
             <input
               type="email"
               id="email"
+              placeholder="email"
               className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -76,12 +86,16 @@ const Register = () => {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block text-gray-700">
+            <label
+              htmlFor="password"
+              className="block font-semibold text-gray-700"
+            >
               Password
             </label>
             <input
               type="password"
               id="password"
+              placeholder="password"
               className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

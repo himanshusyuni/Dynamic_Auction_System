@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ItemCard from "../Components/ItemCard";
 import axios from "axios";
 import Footer from "../Components/Footer";
+import { FaPlus, FaUser } from "react-icons/fa";
 
 const HomePage = () => {
   const [liveAuctions, setLiveAuctions] = useState([]);
@@ -14,7 +15,7 @@ const HomePage = () => {
   );
 
   const navigate = useNavigate();
-  const BASE_URL =  import.meta.env.VITE_BackendURL;
+  const BASE_URL = import.meta.env.VITE_BackendURL;
 
   const liveAuctionsRef = useRef([]);
   const searchQueryRef = useRef("");
@@ -69,13 +70,20 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="bg-gray-100 min-h-screen">
+      <div className="bg-gray-100 min-h-screen pt-24">
         {/* Header */}
-        <div className="flex items-center justify-between bg-white p-4 shadow-md">
-          <div className="text-xl font-bold text-blue-600">BidHub</div>
-          <div className="flex items-center space-x-4 w-full justify-center">
-            {/* Search bar */}
-            <div className="relative w-1/2">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-6 py-4 flex items-center justify-between">
+          {/* Logo */}
+          <div
+            className="text-xl font-bold text-blue-600 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            BidHub
+          </div>
+
+          {/* Centered Search Bar */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1/2">
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Search items..."
@@ -87,37 +95,37 @@ const HomePage = () => {
                 Search
               </button>
             </div>
+          </div>
 
+          {/* Right Side Buttons */}
+          <div className="flex items-center space-x-4">
             <button
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
               onClick={() => navigate("/auction/create")}
+              className="flex items-center gap-2 text-sm text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700"
             >
+              <FaPlus />
               Create Auction
             </button>
-          </div>
-          <div className="relative">
+
             <button
-              className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
               onClick={() => navigate("/user")}
+              className="flex items-center gap-2 text-sm text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
             >
-              <img
-                src="https://www.w3schools.com/w3images/avatar2.png"
-                alt="Profile"
-                className="w-8 h-8 rounded-full"
-              />
+              <FaUser />
+              Profile
             </button>
           </div>
         </div>
 
         {/* Live Auctions */}
-        <div className="p-8">
+        <div className="pl-8">
           <h2 className="text-2xl font-bold mb-4">Live Auctions</h2>
           <div className="flex overflow-x-auto space-x-4">
             {filteredLiveAuctions.length > 0 ? (
               filteredLiveAuctions.map((item) => (
                 <div
                   key={item._id}
-                  className="flex-none w-60 border rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                  className="flex-none py-2 pl-2 w-64 rounded-lg cursor-pointer hover:scale-105 transition-transform"
                   onClick={() => navigate(`/auction/${item._id}`)}
                 >
                   <ItemCard item={item} />
@@ -137,7 +145,7 @@ const HomePage = () => {
               filteredCompletedAuctions.map((item) => (
                 <div
                   key={item._id}
-                  className="flex-none w-60 border rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                  className="flex-none  py-2 w-64 pl-2 rounded-lg cursor-pointer hover:scale-105 transition-transform"
                   onClick={() => navigate(`/auction/${item._id}`)}
                 >
                   <ItemCard item={item} />

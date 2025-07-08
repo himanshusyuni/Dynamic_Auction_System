@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Redirect from "../Components/Redirect";
+import Header from "../Components/Header";
 
-// const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Add your base API 
+// const BASE_URL = "https://dynamic-auction-system.vercel.app/api"; // Add your base API
 // URL
 
-const BASE_URL =  import.meta.env.VITE_BackendURL;
+const BASE_URL = import.meta.env.VITE_BackendURL;
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -212,33 +213,133 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="flex">
-      <div className="w-1/4 bg-green-100 p-6 min-h-screen flex flex-col">
-        <div className="space-y-8">
-          <button
-            className="text-lg w-full p-2 rounded-md bg-green-500 hover:bg-green-600"
-            onClick={() => setIsEditing(true)}
-          >
-            Profile
-          </button>
-        </div>
-        <div className="mt-auto text-center space-y-4">
-          <button
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-            onClick={() => navigate("/")}
-          >
-            Back to Homepage
-          </button>
-          <button
-            className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700"
-            onClick={handleLogout}
-          >
-            Log Out
-          </button>
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-100 py-10 px-4 flex justify-center items-start pt-20 ">
+        <div className="w-full max-w-3xl bg-white rounded-xl shadow-md p-8 border-2  border-blue-600">
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-800">My Profile</h2>
+          </div>
+
+          {/* Profile Content */}
+          <div className="flex items-start gap-6">
+            {/* Profile Picture */}
+            <div className="flex flex-col items-center">
+              <img
+                src={
+                  selectedImage
+                    ? URL.createObjectURL(selectedImage)
+                    : userData.profilePic || "https://via.placeholder.com/150"
+                }
+                alt="User"
+                className="w-32 h-32 rounded-full object-cover border-2 border-blue-500"
+              />
+              {isEditing && (
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  className="mt-3 text-sm "
+                />
+              )}
+            </div>
+
+            {/* Profile Form */}
+            <div className="flex-1 space-y-4">
+              {/* Username */}
+              <div>
+                <label className="block text-gray-600 font-medium">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded-md p-2 size-8 focus:ring-2 focus:ring-blue-500"
+                  value={userData.username}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    setUserData({ ...userData, username: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-gray-600 font-medium">Email</label>
+                <input
+                  type="email"
+                  className="w-full mt-1 bg-gray-100 border border-gray-300 rounded-md p-2 size-8"
+                  value={userData.email}
+                  disabled
+                />
+              </div>
+
+              {/* DOB */}
+              <div>
+                <label className="block text-gray-600 font-medium">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  className="w-full mt-1 border border-gray-300 rounded-md p-2 size-8"
+                  value={
+                    userData.dob
+                      ? new Date(userData.dob).toISOString().split("T")[0]
+                      : ""
+                  }
+                  onChange={(e) =>
+                    setUserData({ ...userData, dob: e.target.value })
+                  }
+                  disabled={!isEditing}
+                />
+              </div>
+
+              {/* Address */}
+              <div>
+                <label className="block text-gray-600 font-medium">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  className="w-full mt-1 border border-gray-300 rounded-md p-2 size-8"
+                  value={userData.address}
+                  onChange={(e) =>
+                    setUserData({ ...userData, address: e.target.value })
+                  }
+                  disabled={!isEditing}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              {/* Action Buttons */}
+              <div className="pt-4 flex flex-wrap gap-4">
+                <button
+                  className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700"
+                  onClick={handleEditToggle}
+                >
+                  {isEditing ? "Cancel" : "Edit Profile"}
+                </button>
+
+                {isEditing && (
+                  <button
+                    className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+                    onClick={handleChanges}
+                  >
+                    Save Changes
+                  </button>
+                )}
+
+                <button
+                  className="ml-auto bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="w-3/4 p-8">{renderProfileSection()}</div>
-    </div>
+    </>
   );
 };
 
