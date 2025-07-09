@@ -75,7 +75,7 @@ const HomePage = () => {
         <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <div
-            className="text-xl font-bold text-blue-600 cursor-pointer"
+            className="text-2xl font-bold text-blue-600 cursor-pointer"
             onClick={() => navigate("/")}
           >
             BidHub
