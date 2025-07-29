@@ -10,6 +10,7 @@ import ContactUs from "./Pages/ContactUs";
 import TermsAndConditions from "./Pages/TandC";
 import CancellationAndRefund from "./Pages/Cancel_Refund";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import Shipping from "./Pages/Ship_Del";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -56,6 +57,10 @@ const App = () => {
     {
       path: "/contact-us",
       element: <ContactUs />,
+    },
+    {
+      path: "/shipping_delivery",
+      element: <Shipping />,
     },
 
   ]);
