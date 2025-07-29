@@ -6,6 +6,10 @@ import HomePage from "./Pages/Homepage";
 import CreateAuctionPage from "./Pages/CreateAuction";
 import ItemDetailsPage from "./Pages/ItemDetailsPage";
 import Pending from "./Components/Pending";
+import ContactUs from "./Pages/ContactUs";
+import TermsAndConditions from "./Pages/TandC";
+import CancellationAndRefund from "./Pages/Cancel_Refund";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -37,6 +41,23 @@ const App = () => {
       path: "/pending",
       element: <Pending />,
     },
+    {
+      path: "/cancellation-and-refund",
+      element: <CancellationAndRefund/>,
+    },
+    {
+      path: "/terms-and-conditions",
+      element: <TermsAndConditions />,
+    },
+    {
+      path: "/privacy-policy",
+      element: <PrivacyPolicy />,
+    },
+    {
+      path: "/contact-us",
+      element: <ContactUs />,
+    },
+
   ]);
   return <RouterProvider router={router} />;
 };
